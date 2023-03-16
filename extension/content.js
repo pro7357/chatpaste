@@ -31,12 +31,29 @@ function handleLogging(logToken) {
   const callback = (mutationList, observer) => {
     for (const mutation of mutationList) {
       if (mutation.type === "childList") {
+        let chatEle = logNode.children
+        for (const addNode of mutation.addedNodes) {
+          if (addNode.classList && addNode.classList.contains('text-2xl')) {
+            // Get the chat from user
+            let thirdEle = chatEle[chatEle.length-3].querySelector('.markdown');
+            let secondEle = chatEle[chatEle.length-2].querySelector('.markdown');
+            if (thirdEle === null) {
+              handleChats(logToken, chatEle[chatEle.length-3]);
+            } else if (secondEle === null) {
+              handleChats(logToken, chatEle[chatEle.length-2]);
+            }
+          }
+        }
         for (const rmNode of mutation.removedNodes) {
           if (rmNode.classList && rmNode.classList.contains('text-2xl')) {
-            // Get the last two chat elements
-            let chatEle = logNode.children
-            handleChats(logToken, chatEle[chatEle.length-3]);
-            handleChats(logToken, chatEle[chatEle.length-2]);
+            // Get the response from ChatGPT
+            let thirdEle = chatEle[chatEle.length-3].querySelector('.markdown');
+            let secondEle = chatEle[chatEle.length-2].querySelector('.markdown');
+            if (thirdEle !== null && thirdEle.classList.contains('markdown')) {
+              handleChats(logToken, chatEle[chatEle.length-3]);
+            } else if (secondEle !== null && secondEle.classList.contains('markdown')) {
+              handleChats(logToken, chatEle[chatEle.length-2]);
+            }
           }
         }
       }
