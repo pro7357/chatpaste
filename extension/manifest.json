@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "ChatPaste",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Paste chat from ChatGPT to terminal.",
   "host_permissions": ["https://chat.openai.com/chat/*"],
   "permissions": [
