@@ -19,8 +19,12 @@ Install tomnomnom's webpaste server:
 ## Usage
 
 To use ChatPaste, follow these steps:
-1. Open terminal, set environment variable: export WEBPASTE_TOKEN=chats
+1. Open terminal, set environment variable:
+  `export WEBPASTE_TOKEN=chats`
 2. Run webpaste. ChatPaste is hardcoded to use port 8080.
+  `webpaste`
+  or
+  `webpaste | tee -a save_file.txt`
 3. Open the chat conversation in ChatGPT.
 4. Click on the ChatPaste icon in your Chrome toolbar. All chats will be printout to terminal.
 ### Live log
