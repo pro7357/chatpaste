@@ -2,8 +2,7 @@
 
 ChatPaste is a Chrome extension send chat logs from ChatGPT to terminal stdout.
 I butchered tomnomnom's webpaste and remake it into ChatPaste with the help of ChatGPT. See ## Credits for more info.
-I don't have any plan for local server. Just keep using tomnomnom webpaste server. You can install it like these:
-`go install github.com/tomnomnom/hacks/webpaste@latest`
+I don't have any plan for local server. Just keep using tomnomnom webpaste server.
 
 ## Installation
 
@@ -13,6 +12,9 @@ To install ChatPaste, follow these steps:
 2. Open Chrome and navigate to `chrome://extensions`.
 3. Enable developer mode by clicking the toggle switch in the top right corner.
 4. Click the "Load unpacked" button and select the `extension` folder.
+
+Install tomnomnom's webpaste server:
+`go install github.com/tomnomnom/hacks/webpaste@latest`
 
 ## Usage
 
@@ -32,4 +34,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Credits
 This project is based on [webpaste](https://github.com/tomnomnom/hacks/tree/master/webpaste) by [tomnomnom](https://github.com/tomnomnom). 
+
 This project is impossible to me without the help from ChatGPT.
