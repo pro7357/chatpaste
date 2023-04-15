@@ -14,7 +14,7 @@ To install ChatPaste, follow these steps:
 4. Click the "Load unpacked" button and select the `extension` folder.
 
 Install tomnomnom's webpaste server:
-`go install github.com/tomnomnom/hacks/webpaste@latest`
+1. `go install github.com/tomnomnom/hacks/webpaste@latest`
 
 ## Usage
 
@@ -33,6 +33,5 @@ Note2: The `[token]` is the switch that ChatPaste use to start live log.
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Credits
-This project is based on [webpaste](https://github.com/tomnomnom/hacks/tree/master/webpaste) by [tomnomnom](https://github.com/tomnomnom). 
-
-This project is impossible to me without the help from ChatGPT.
+- This project is based on [webpaste](https://github.com/tomnomnom/hacks/tree/master/webpaste) by [tomnomnom](https://github.com/tomnomnom). 
+- This project is build with the help from ChatGPT.
