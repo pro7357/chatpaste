@@ -2,7 +2,7 @@
 
 ChatPaste is a Chrome extension send chat logs from ChatGPT to terminal stdout.
 I butchered tomnomnom's webpaste and remake it into ChatPaste with the help of ChatGPT. See ## Credits for more info.
-I don't have any plan for local server. Just keep using tomnomnom webpaste server.
+I don't have any plan for local server. Just keep using tomnomnom's webpaste server.
 
 ## Installation
 
@@ -20,17 +20,29 @@ Install tomnomnom's webpaste server:
 
 To use ChatPaste, follow these steps:
 1. Open terminal, set environment variable:
-  `export WEBPASTE_TOKEN=chats`
-2. Run webpaste. ChatPaste is hardcoded to use port 8080.
-  `webpaste`
-  or
-  `webpaste | tee -a save_file.txt`
+- `export WEBPASTE_TOKEN=chats`
+2. Run webpaste.
+-  `webpaste`
+-  or
+-  `webpaste | tee -a save_file.txt`
 3. Open the chat conversation in ChatGPT.
 4. Click on the ChatPaste icon in your Chrome toolbar. All chats will be printout to terminal.
-### Live log
+
+### Live chats
+Live log printout the chats to terminal as soon as the chat fully posted.
 1. Edit the title of chat conversation, add `[token]`
-Note1: For button, the token is hardcoded, `chats`. For live log, you can put any token in the bracket.
-Note2: The `[token]` is the switch that ChatPaste use to start live log.
+2. Open terminal, set environment variable:
+- `export WEBPASTE_TOKEN=token`
+3. Run webpaste.
+-  `webpaste`
+-  or
+-  `webpaste | tee -a live_file.txt`
+4. Start chatting.
+
+### Notes
+- For button, the token is hardcoded, `chats`. For live log, you can put any token in the bracket.
+- The `[token]` is the switch that ChatPaste use to start live log.
+- ChatPaste is hardcoded to use port 8080.
 
 ## License
 
