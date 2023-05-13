@@ -29,7 +29,8 @@ To use ChatPaste, follow these steps:
 4. Click on the ChatPaste icon in your Chrome toolbar. All chats will be printout to terminal.
 
 ### Live chats
-Live log printout the chats to terminal as soon as the chat fully posted.
+Live printout chat to terminal as soon as the chat posted.
+
 1. Edit the title of chat conversation, add `[token]`
 2. Open terminal, set environment variable:
 - `export WEBPASTE_TOKEN=token`
@@ -38,6 +39,16 @@ Live log printout the chats to terminal as soon as the chat fully posted.
 -  or
 -  `webpaste | tee -a live_file.txt`
 4. Start chatting.
+
+
+If Chat History & Training disable:
+1. Open terminal, set environment variable:
+- `export WEBPASTE_TOKEN=chats`
+2. Run webpaste.
+-  `webpaste`
+-  or
+-  `webpaste | tee -a live_file.txt`
+3. Start chatting.
 
 ### Notes
 - For button, the token is hardcoded, `chats`. For live log, you can put any token in the bracket.

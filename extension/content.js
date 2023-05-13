@@ -27,39 +27,46 @@ function handleLogging(logToken) {
   const logNode = document.querySelector(".flex.flex-col.items-center.text-sm.dark\\:bg-gray-800");
   const aniNode = document.querySelector(".flex.flex-col.w-full.py-2.flex-grow.md\\:py-3.md\\:pl-4.relative.border");
 
-  // Callback function for mutations to the logNode
+  // Callback function for mutations to the aniNode
   const callback = (mutationList, observer) => {
     for (const mutation of mutationList) {
-      if (mutation.type === "childList") {
-        let chatEle = logNode.children
-        for (const addNode of mutation.addedNodes) {
-          if (addNode.classList && addNode.classList.contains('text-2xl')) {
-            // Get the chat from user
-            let thirdEle = chatEle[chatEle.length-3].querySelector('.markdown');
-            let secondEle = chatEle[chatEle.length-2].querySelector('.markdown');
-            if (thirdEle === null) {
-              handleChats(logToken, chatEle[chatEle.length-3]);
-            } else if (secondEle === null) {
-              handleChats(logToken, chatEle[chatEle.length-2]);
-            }
+      if (mutation.type !== "childList") {
+        continue;
+      }
+      if (logNode === null) {
+        continue;
+      }
+
+      let chatEle = logNode.children;
+
+      // Get the chat from user
+      for (const node of mutation.addedNodes) {
+        if (node.classList && node.classList.contains('text-2xl')) {
+          let thirdEle = chatEle[chatEle.length-3]?.querySelector('.markdown');
+          let secondEle = chatEle[chatEle.length-2]?.querySelector('.markdown');
+          if (thirdEle === null) {
+            handleChats(logToken, chatEle[chatEle.length-3]);
+          } else if (secondEle === null) {
+            handleChats(logToken, chatEle[chatEle.length-2]);
           }
         }
-        for (const rmNode of mutation.removedNodes) {
-          if (rmNode.classList && rmNode.classList.contains('text-2xl')) {
-            // Get the response from ChatGPT
-            let thirdEle = chatEle[chatEle.length-3].querySelector('.markdown');
-            let secondEle = chatEle[chatEle.length-2].querySelector('.markdown');
-            if (thirdEle !== null && thirdEle.classList.contains('markdown')) {
-              handleChats(logToken, chatEle[chatEle.length-3]);
-            } else if (secondEle !== null && secondEle.classList.contains('markdown')) {
-              handleChats(logToken, chatEle[chatEle.length-2]);
-            }
+      }
+
+      // Get the response from ChatGPT
+      for (const node of mutation.removedNodes) {
+        if (node.classList && node.classList.contains('text-2xl')) {
+          let thirdEle = chatEle[chatEle.length-3]?.querySelector('.markdown');
+          let secondEle = chatEle[chatEle.length-2]?.querySelector('.markdown');
+          if (thirdEle !== null && thirdEle.classList.contains('markdown')) {
+            handleChats(logToken, chatEle[chatEle.length-3]);
+          } else if (secondEle !== null && secondEle.classList.contains('markdown')) {
+            handleChats(logToken, chatEle[chatEle.length-2]);
           }
         }
       }
     }
   };
-  
+
   // Observe mutations to the aniNode
   const aniObserver = new MutationObserver(callback);
   aniObserver.observe(aniNode, { childList: true, subtree: true });
@@ -71,9 +78,8 @@ function handleLogging(logToken) {
 function handleTitleChange() {
   let docTitle = document.title;
 
-  // Start a live logging if chat title start with a bracket.
+  // Start a live logging if chat title start with a bracket with the word inside bracket as a token.
   if (docTitle.startsWith('[')) {
-    // Use the word inside bracket as a token.
     let logToken = docTitle.slice(1,docTitle.indexOf(']'));
     handleLogging(logToken);
   }
@@ -86,6 +92,11 @@ window.addEventListener("load", function() {
   const titleElement = document.querySelector("head title");
   if (titleElement) {
     titleObserver.observe(titleElement, { childList: true });
+  }
+
+  // Start a live logging if default no history.
+  if ( document.title === 'New chat') {
+    handleLogging("chats");
   }
 });
 
