@@ -22,7 +22,7 @@ document.getElementById("test-btn").addEventListener("click", () => {
 // Function to get chats in the page
 function getChats() {
   // Get the chat container element and extract the chat text
-  const chatContainer = document.querySelector('div.overflow-hidden.w-full.h-full.relative main div');
+  const chatContainer = document.querySelector('div.overflow-hidden.w-full.h-full.relative main');
   const chatText = chatContainer.innerText;
 
   // Split the chat text into an array and return it
