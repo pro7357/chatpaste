@@ -88,7 +88,8 @@ function handleTitleChange() {
 // Add event listener for when the window loads
 window.addEventListener("load", function() {
   // Start a live logging by default if chat history is off.
-  if (document.querySelector("div.p-1.text-sm.text-gray-100").textContent === 'Chat History is off.') {
+  const docHistory = document.querySelector("div.p-1.text-sm.text-gray-100");
+  if (docHistory !== null && docHistory.textContent === 'Chat History is off.') {
     handleLogging("chats");
   }
 
