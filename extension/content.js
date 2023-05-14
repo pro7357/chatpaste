@@ -87,16 +87,16 @@ function handleTitleChange() {
 
 // Add event listener for when the window loads
 window.addEventListener("load", function() {
+  // Start a live logging by default if chat history is off.
+  if (document.querySelector("div.p-1.text-sm.text-gray-100").textContent === 'Chat History is off.') {
+    handleLogging("chats");
+  }
+
   // Add observer for changes to the document title
   const titleObserver = new MutationObserver(handleTitleChange);
   const titleElement = document.querySelector("head title");
   if (titleElement) {
     titleObserver.observe(titleElement, { childList: true });
-  }
-
-  // Start a live logging if default no history.
-  if ( document.title === 'New chat') {
-    handleLogging("chats");
   }
 });
 
