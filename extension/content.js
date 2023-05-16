@@ -6,15 +6,6 @@
 function handleChats(chatToken, chatNode) {
   const chatText = chatNode.innerText.trim();
 
-  // Check if the chat has the data-chat attribute
-  if (chatNode.hasAttribute('data-chat')) {
-    return;
-  }
-
-  // If the chat doesn't have the data-chat attribute, add it
-  const chatId = new Date().getTime();
-  chatNode.setAttribute('data-chat', chatId);
-
   // Send the chat to the background script
   chrome.runtime.sendMessage({ token: chatToken, chats: chatText.split('\n').filter(e => e) }, function(response) {});
 }
