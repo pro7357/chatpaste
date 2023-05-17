@@ -1,5 +1,11 @@
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  // Send the chats to your local server via fetch
+  //console.log("rchats",request.chats);
+  if (request.chats[0] === 'ChatGPT') {
+    request.chats[0] = '';
+  } else {
+    request.chats.unshift('');
+  }
+
   fetch('http://127.0.0.1:8080/', {
     method: 'POST',
     mode: 'cors',
