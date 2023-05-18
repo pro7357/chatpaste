@@ -75,42 +75,20 @@ function handleTitleChange() {
   if (docTitle.startsWith('[')) {
     let logToken = docTitle.slice(1,docTitle.indexOf(']'));
     handleLogging(logToken);
+  } else if (docTitle.startsWith('New chat')) {
+    handleLogging("chats");
   }
 }
 
 // Add event listener for when the window loads
 window.addEventListener("load", function() {
-  // Start a live logging by default if chat history is off.
-  const docHistory = document.querySelector("div.p-1.text-sm.text-gray-100");
-  if (docHistory !== null && docHistory.textContent === 'Chat History is off.') {
-    handleLogging("chats");
-  } else {
-    // Add a MutationObserver to monitor changes in the DOM
-    const historyObserver = new MutationObserver(function(mutationsList) {
-      for (let mutation of mutationsList) {
-        // Check if the desired element becomes available
-        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-          const docHistory = document.querySelector("div.p-1.text-sm.text-gray-100");
-          if (docHistory !== null && docHistory.textContent === 'Chat History is off.') {
-            handleLogging("chats");
-            historyObserver.disconnect();
-            break;
-          }
-        }
-      }
-    });
-
-    // Start observing changes in the DOM
-    const containerElement = document.querySelector("div.bg-gray-900.px-4.py-3");
-    if (containerElement) {
-        historyObserver.observe(containerElement, { childList: true, subtree: true });
-    }
-  }
-  
   // Add observer for changes to the document title
   const titleObserver = new MutationObserver(handleTitleChange);
   const titleElement = document.querySelector("head title");
   if (titleElement) {
+    if (titleElement.textContent === 'New chat') {
+      handleLogging("chats");
+    }
     titleObserver.observe(titleElement, { childList: true });
   }
 });
