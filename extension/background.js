@@ -15,7 +15,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
       "lines": request.chats
     })
   }).catch(function(error) {
-    console.error('Error sending chats to server:', error);
+    console.log('Error: Failed sending chats to http://127.0.0.1:8080.', error);
   });
 
   sendResponse({ message: 'chats received' });
