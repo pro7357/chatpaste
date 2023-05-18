@@ -92,8 +92,8 @@ window.addEventListener("load", function() {
         if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
           const docHistory = document.querySelector("div.p-1.text-sm.text-gray-100");
           if (docHistory !== null && docHistory.textContent === 'Chat History is off.') {
-            historyObserver.disconnect();
             handleLogging("chats");
+            historyObserver.disconnect();
             break;
           }
         }
@@ -102,7 +102,9 @@ window.addEventListener("load", function() {
 
     // Start observing changes in the DOM
     const containerElement = document.querySelector("div.bg-gray-900.px-4.py-3");
-    historyObserver.observe(containerElement, { childList: true, subtree: true });
+    if (containerElement) {
+        historyObserver.observe(containerElement, { childList: true, subtree: true });
+    }
   }
   
   // Add observer for changes to the document title
