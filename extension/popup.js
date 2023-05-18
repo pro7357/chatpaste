@@ -11,9 +11,7 @@ document.getElementById("test-btn").addEventListener("click", () => {
         function: getChats,
       },
       (results) => {
-        // Extract and send the chat messages to the background script
-        const chats = results[0].result.map(chat => chat.trim()).filter(chat => chat);
-        chrome.runtime.sendMessage({ token: "chats", chats });
+        // Handle the results if needed
       }
     );
   });
@@ -21,11 +19,11 @@ document.getElementById("test-btn").addEventListener("click", () => {
 
 // Function to get chats in the page
 function getChats() {
-  // Get the chat container element and extract the chat text
-  const chatContainer = document.querySelector('div.overflow-hidden.w-full.h-full.relative main');
-  const chatText = chatContainer.innerText;
-
-  // Split the chat text into an array and return it
-  const chats = chatText.split('\n');
-  return chats;
+  const allChats = document.querySelector(".flex.flex-col.items-center.text-sm.dark\\:bg-gray-800").childNodes;
+  for (let i = 0; i < allChats.length; i++) {
+    const chatText = allChats[i].innerText.split('\n');
+    chrome.runtime.sendMessage({ token: "chats", chats: chatText }, (response) => {
+      // Handle the response if needed
+    });
+  }
 }
