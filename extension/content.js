@@ -84,8 +84,27 @@ window.addEventListener("load", function() {
   const docHistory = document.querySelector("div.p-1.text-sm.text-gray-100");
   if (docHistory !== null && docHistory.textContent === 'Chat History is off.') {
     handleLogging("chats");
-  }
+  } else {
+    // Add a MutationObserver to monitor changes in the DOM
+    const historyObserver = new MutationObserver(function(mutationsList) {
+      for (let mutation of mutationsList) {
+        // Check if the desired element becomes available
+        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+          const docHistory = document.querySelector("div.p-1.text-sm.text-gray-100");
+          if (docHistory !== null && docHistory.textContent === 'Chat History is off.') {
+            historyObserver.disconnect();
+            handleLogging("chats");
+            break;
+          }
+        }
+      }
+    });
 
+    // Start observing changes in the DOM
+    const containerElement = document.querySelector("div.bg-gray-900.px-4.py-3");
+    historyObserver.observe(containerElement, { childList: true, subtree: true });
+  }
+  
   // Add observer for changes to the document title
   const titleObserver = new MutationObserver(handleTitleChange);
   const titleElement = document.querySelector("head title");
