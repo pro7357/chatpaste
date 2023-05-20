@@ -86,9 +86,7 @@ window.addEventListener("load", function() {
   const titleObserver = new MutationObserver(handleTitleChange);
   const titleElement = document.querySelector("head title");
   if (titleElement) {
-    if (titleElement.textContent === 'New chat') {
-      handleLogging("chats");
-    }
+    handleLogging("chats");
     titleObserver.observe(titleElement, { childList: true });
   }
 });
