@@ -18,6 +18,4 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   });
 
   sendResponse({ message: 'chats received' });
-
-  return true;  // Tell Chrome that we'll handle the response asynchronously
 });
