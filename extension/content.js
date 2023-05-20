@@ -17,7 +17,7 @@ function handleChats(chatToken, chatNode) {
  * @param {string} logToken - Token for the current log.
  */
 function handleLogging(logToken) {
-  const logNode = document.querySelector(".flex.flex-col.items-center.text-sm.dark\\:bg-gray-800");
+  const logNode = document.querySelector(".flex.flex-col.text-sm.dark\\:bg-gray-800");
   const aniNode = document.querySelector(".flex.flex-col.w-full.py-2.flex-grow.md\\:py-3.md\\:pl-4.relative.border");
 
   // Callback function for mutations to the aniNode

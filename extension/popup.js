@@ -19,7 +19,7 @@ document.getElementById("test-btn").addEventListener("click", () => {
 
 // Function to get chats in the page
 function getChats() {
-  const allChats = document.querySelector(".flex.flex-col.items-center.text-sm.dark\\:bg-gray-800").childNodes;
+  const allChats = document.querySelector(".flex.flex-col.text-sm.dark\\:bg-gray-800").childNodes;
   for (let i = 0; i < allChats.length; i++) {
     const chatText = allChats[i].innerText.split('\n');
     chrome.runtime.sendMessage({ token: "chats", chats: chatText }, (response) => {
