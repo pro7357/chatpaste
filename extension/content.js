@@ -4,7 +4,7 @@
  * @param {HTMLElement} chatNode - HTML element containing the chat message.
  */
 function handleChats(chatToken, chatNode) {
-  const chatText = chatNode.innerText.split('\n');
+  const chatText = chatNode.textContent.split('\n');
 
   // Send the chat to the background script
   chrome.runtime.sendMessage({ token: chatToken, chats: chatText }, (response) => {
