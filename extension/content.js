@@ -78,7 +78,7 @@ function handleTitleChange() {
   if (docTitle.startsWith('[')) {
     let logToken = docTitle.slice(1,docTitle.indexOf(']'));
     handleLogging(logToken);
-  } else if (docTitle.startsWith('New chat')) {
+  } else {
     handleLogging("chats");
   }
 }
