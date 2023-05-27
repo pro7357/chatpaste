@@ -17,6 +17,7 @@ function handleChats(chatToken, chatNode) {
  * @param {string} logToken - Token for the current log.
  */
 function handleLogging(logToken) {
+  const newLine = document.createElement("br");
   const logNode = document.querySelector(".flex.flex-col.text-sm.dark\\:bg-gray-800");
   const aniNode = document.querySelector(".flex.flex-col.w-full.py-2.flex-grow.md\\:py-3.md\\:pl-4.relative.border");
   if (aniNode === null) {
@@ -54,9 +55,21 @@ function handleLogging(logToken) {
           let thirdEle = chatEle[chatEle.length-3]?.querySelector('.markdown');
           let secondEle = chatEle[chatEle.length-2]?.querySelector('.markdown');
           if (thirdEle !== null && thirdEle.classList.contains('markdown')) {
-            handleChats(logToken, chatEle[chatEle.length-3]);
+            handleChats(logToken, chatEle[chatEle.length-3].querySelector('.flex-grow.flex-shrink-0'));
+
+            let paragraphs = chatEle[chatEle.length-3].querySelectorAll("p");
+            paragraphs.forEach((paragraph) => {
+              handleChats(logToken, paragraph.nextSibling);
+              handleChats(logToken, newLine);
+            });
           } else if (secondEle !== null && secondEle.classList.contains('markdown')) {
-            handleChats(logToken, chatEle[chatEle.length-2]);
+            handleChats(logToken, chatEle[chatEle.length-2].querySelector('.flex-grow.flex-shrink-0'));
+
+            let paragraphs = chatEle[chatEle.length-2].querySelectorAll("p");
+            paragraphs.forEach((paragraph) => {
+              handleChats(logToken, paragraph);
+              handleChats(logToken, newLine);
+            });
           }
         }
       }
