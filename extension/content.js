@@ -20,7 +20,7 @@ function handleLogging(logToken) {
   const logNode = document.querySelector(".flex.flex-col.text-sm.dark\\:bg-gray-800");
   const aniNode = document.querySelector(".flex.flex-col.w-full.py-2.flex-grow.md\\:py-3.md\\:pl-4.relative.border");
   if (aniNode === null) {
-        return
+        return;
   }
 
   // Callback function for mutations to the aniNode
@@ -83,15 +83,39 @@ function handleTitleChange() {
   }
 }
 
+let isLoggingStarted = false;
+
 // Add event listener for when the window loads
 window.addEventListener("load", function() {
   // Add observer for changes to the document title
   const titleObserver = new MutationObserver(handleTitleChange);
   const titleElement = document.querySelector("head title");
+
   if (titleElement) {
-    handleLogging("chats");
+    isLoggingStarted = false;
+    checkAndHandleLogging();
     titleObserver.observe(titleElement, { childList: true });
   }
 });
+
+// Function to check for the overflow-y-hidden class and handle logging
+function checkAndHandleLogging() {
+  const overflowHiddenElements = document.getElementsByClassName('overflow-y-hidden');
+
+  if (overflowHiddenElements.length > 0 && !isLoggingStarted) {
+    isLoggingStarted = true;
+    handleLogging("chats");
+  }
+}
+
+// Mutation observer for the entire document body
+const bodyObserver = new MutationObserver(function(mutations) {
+  checkAndHandleLogging();
+});
+
+bodyObserver.observe(document.body, { attributes: true, subtree: true });
+
+// Call the checkAndHandleLogging function initially to check if the class is already present
+checkAndHandleLogging();
 
 //console.log("content.js initialized");
