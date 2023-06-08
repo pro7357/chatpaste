@@ -1,121 +1,165 @@
-/**
- * Function to handle processing of new chats.
- * @param {string} chatToken - Token for the current chat.
- * @param {HTMLElement} chatNode - HTML element containing the chat message.
- */
-function handleChats(chatToken, chatNode) {
-  const chatText = chatNode.textContent.split('\n');
+let isLiveRunning = false;
+let isLiveEnabled = true;
+let isHTMLEnabled = false;
+let loggingObserver = null;
 
-  // Send the chat to the background script
-  chrome.runtime.sendMessage({ token: chatToken, chats: chatText }, (response) => {
-    // Handle the response if needed
+// Initialize using values from background.js
+chrome.runtime.sendMessage({ action: "getLiveState" }, function (response) {
+  isLiveEnabled = response.value;
+});
+
+chrome.runtime.sendMessage({ action: "getHTMLState" }, function (response) {
+  isHTMLEnabled = response.value;
+});
+
+// Listen for messages from background.js
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+  if (message.action === "isLiveEnabled") {
+    isLiveEnabled = message.value;
+    if (isLiveEnabled && !isLiveRunning) {
+      startLogging();
+    } else if (!isLiveEnabled) {
+      stopLogging();
+    }
+  } else if (message.action === "isHTMLEnabled") {
+    if (isHTMLEnabled !== message.value) {
+      isHTMLEnabled = message.value;
+      if (isLiveEnabled && !isLiveRunning) {
+        startLogging();
+      }
+    }
+  }
+});
+
+function updateRunningState() {
+  chrome.runtime.sendMessage({ action: "updateRunningState", value: isLiveRunning }, () => {});
+}
+
+async function startLogging() {
+  if (!isLiveRunning) {
+    isLiveRunning = true;
+    updateRunningState();
+    loggingPromise = liveLogging();
+    try {
+      await loggingPromise;
+    } catch {
+      stopLogging();
+      startLogging();
+    }
+  }
+}
+
+function stopLogging() {
+  if (loggingObserver) {
+    loggingObserver.disconnect();
+    loggingObserver = null;
+  }
+  if (loggingPromise) {
+    loggingPromise.catch(() => {});
+    loggingPromise = null;
+  }
+  isLiveRunning = false;
+  updateRunningState();
+}
+
+// Clean the text by adding line breaks between numbers and text
+function cleanText(rawText) {
+  rawText[0] = rawText[0].replace(/^([0-9]+\s\/\s[0-9]+)([^0-9])/,"Prompt: $1\n$2");
+  rawText[0] = rawText[0].replace(/^ChatGPTChatGPT([0-9]+\s\/\s[0-9]+)([^0-9])/,"ChatGPT: $1\n$2");
+  return rawText;
+}
+
+function handleChats(chatText) {
+  chrome.runtime.sendMessage({ action: "chats", value: chatText }, () => {});
+}
+
+function handleUserPrompt(){
+  let chatElement = document.querySelector(".flex.flex-col.text-sm.dark\\:bg-gray-800").children;
+  let thirdElement = chatElement[chatElement.length-3]?.querySelector('.markdown');
+  let secondElement = chatElement[chatElement.length-2]?.querySelector('.markdown');
+
+  let chatText;
+  if (thirdElement === null) {
+    if (isHTMLEnabled) {
+      chatText = chatElement[chatElement.length-3].innerHTML.split('\n');
+    } else {
+      chatText = cleanText(chatElement[chatElement.length-3].textContent.split('\n'));
+    }
+    handleChats(chatText);
+  } else if (secondElement === null) {
+    if (isHTMLEnabled) {
+      chatText = chatElement[chatElement.length-2].innerHTML.split('\n');
+    } else {
+      chatText = cleanText(chatElement[chatElement.length-2].textContent.split('\n'));
+    }
+    handleChats(chatText);
+  }
+}
+
+function handleChatResponse(){
+  let chatElement = document.querySelector(".flex.flex-col.text-sm.dark\\:bg-gray-800").children;
+  let thirdElement = chatElement[chatElement.length-3]?.querySelector('.markdown');
+  let secondElement = chatElement[chatElement.length-2]?.querySelector('.markdown');
+
+  let chatText;
+  if (thirdElement !== null && thirdElement.classList.contains('markdown')) {
+    if (isHTMLEnabled) {
+      chatText = chatElement[chatElement.length-3].innerHTML.split('\n');
+    } else {
+      chatText = cleanText(chatElement[chatElement.length-3].textContent.split('\n'));
+    }
+    handleChats(chatText);
+  } else if (secondElement !== null && secondElement.classList.contains('markdown')) {
+    if (isHTMLEnabled) {
+      chatText = chatElement[chatElement.length-2].innerHTML.split('\n');
+    } else {
+      chatText = cleanText(chatElement[chatElement.length-2].textContent.split('\n'));
+    }
+    handleChats(chatText);
+  }
+}
+
+function liveLogging() {
+  return new Promise((resolve, reject) => {
+    if (!isLiveEnabled) {
+      resolve();
+      return;
+    }
+    loggingObserver = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        const addedNodes = Array.from(mutation.addedNodes);
+        const removedNodes = Array.from(mutation.removedNodes);
+
+        if (addedNodes.some((node) => node.matches && node.matches("div.text-2xl"))) {
+          handleUserPrompt();
+        }
+
+        if (removedNodes.some((node) => node.matches && node.matches("div.text-2xl"))) {
+          handleChatResponse();
+        }
+      });
+    });
+
+    loggingObserver.observe(document.documentElement, { childList: true, subtree: true });
   });
 }
 
-/**
- * Function to handle processing of log messages.
- * @param {string} logToken - Token for the current log.
- */
-function handleLogging(logToken) {
-  const logNode = document.querySelector(".flex.flex-col.text-sm.dark\\:bg-gray-800");
-  const aniNode = document.querySelector(".flex.flex-col.w-full.py-2.flex-grow.md\\:py-3.md\\:pl-4.relative.border");
-  if (aniNode === null) {
-        return;
-  }
+// Check if the page is loaded and start logging
+function isPage() {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => { reject(); }, 3000);
 
-  // Callback function for mutations to the aniNode
-  const callback = (mutationList, observer) => {
-    for (const mutation of mutationList) {
-      if (mutation.type !== "childList") {
-        continue;
+    const checkPage = () => {
+      const pageMarker = document.querySelector("div.overflow-hidden.w-full.h-full.relative.flex.z-0");
+      if (pageMarker) {
+        resolve();
+      } else {
+        setTimeout(checkPage, 800);
       }
-      if (logNode === null) {
-        continue;
-      }
-
-      let chatEle = logNode.children;
-
-      // Get the chat from user
-      for (const node of mutation.addedNodes) {
-        if (node.classList && node.classList.contains('text-2xl')) {
-          let thirdEle = chatEle[chatEle.length-3]?.querySelector('.markdown');
-          let secondEle = chatEle[chatEle.length-2]?.querySelector('.markdown');
-          if (thirdEle === null) {
-            handleChats(logToken, chatEle[chatEle.length-3]);
-          } else if (secondEle === null) {
-            handleChats(logToken, chatEle[chatEle.length-2]);
-          }
-        }
-      }
-
-      // Get the response from ChatGPT
-      for (const node of mutation.removedNodes) {
-        if (node.classList && node.classList.contains('text-2xl')) {
-          let thirdEle = chatEle[chatEle.length-3]?.querySelector('.markdown');
-          let secondEle = chatEle[chatEle.length-2]?.querySelector('.markdown');
-          if (thirdEle !== null && thirdEle.classList.contains('markdown')) {
-            handleChats(logToken, chatEle[chatEle.length-3]);
-          } else if (secondEle !== null && secondEle.classList.contains('markdown')) {
-            handleChats(logToken, chatEle[chatEle.length-2]);
-          }
-        }
-      }
-    }
-  };
-
-  // Observe mutations to the aniNode
-  const aniObserver = new MutationObserver(callback);
-  aniObserver.observe(aniNode, { childList: true, subtree: true });
+    };
+    checkPage();
+  });
 }
-
-/**
- * Function to handle changes to the document title.
- */
-function handleTitleChange() {
-  let docTitle = document.title;
-
-  // Start a live logging if chat title start with a bracket with the word inside bracket as a token.
-  if (docTitle.startsWith('[')) {
-    let logToken = docTitle.slice(1,docTitle.indexOf(']'));
-    handleLogging(logToken);
-  } else {
-    handleLogging("chats");
-  }
-}
-
-let isLoggingStarted = false;
-
-// Add event listener for when the window loads
-window.addEventListener("load", function() {
-  // Add observer for changes to the document title
-  const titleObserver = new MutationObserver(handleTitleChange);
-  const titleElement = document.querySelector("head title");
-
-  if (titleElement) {
-    isLoggingStarted = false;
-    checkAndHandleLogging();
-    titleObserver.observe(titleElement, { childList: true });
-  }
+isPage().then((result) => {
+  startLogging();
 });
-
-// Function to check for the overflow-y-hidden class and handle logging
-function checkAndHandleLogging() {
-  const overflowHiddenElements = document.getElementsByClassName('overflow-y-hidden');
-
-  if (overflowHiddenElements.length > 0 && !isLoggingStarted) {
-    isLoggingStarted = true;
-    handleLogging("chats");
-  }
-}
-
-// Mutation observer for the entire document body
-const bodyObserver = new MutationObserver(function(mutations) {
-  checkAndHandleLogging();
-});
-
-bodyObserver.observe(document.body, { attributes: true, subtree: true });
-
-// Call the checkAndHandleLogging function initially to check if the class is already present
-checkAndHandleLogging();
-
-//console.log("content.js initialized");

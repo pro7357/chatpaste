@@ -1,13 +1,18 @@
 {
   "manifest_version": 3,
   "name": "ChatPaste",
-  "version": "2.1.8",
-  "description": "Paste chat from ChatGPT to terminal.",
+  "version": "1.0",
   "host_permissions": ["https://chat.openai.com/*"],
-  "permissions": [
-    "activeTab",
-    "scripting"
-  ],
+  "permissions": ["scripting", "activeTab", "storage"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon_green16.png",
+      "32": "icon_green32.png",
+      "48": "icon_green48.png",
+      "128": "icon_green128.png"
+    }
+  },
   "background": {
     "service_worker": "background.js"
   },
@@ -17,7 +22,7 @@
       "js": ["content.js"]
     }
   ],
-  "action": {
-    "default_popup": "popup.html"
+  "icons": {
+    "128": "icon_green128.png"
   }
 }
