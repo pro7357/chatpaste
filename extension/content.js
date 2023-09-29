@@ -130,11 +130,11 @@ function liveLogging() {
         const addedNodes = Array.from(mutation.addedNodes);
         const removedNodes = Array.from(mutation.removedNodes);
 
-        if (addedNodes.some((node) => node.matches && node.matches("div.text-2xl"))) {
+        if (addedNodes.some((node) => node.matches && node.matches(".absolute.bottom-0.right-2.top-0.p-1.md\\:right-3.md\\:p-2"))) {
           handleUserPrompt();
         }
 
-        if (removedNodes.some((node) => node.matches && node.matches("div.text-2xl"))) {
+        if (removedNodes.some((node) => node.matches && node.matches(".absolute.bottom-0.right-2.top-0.p-1.md\\:right-3.md\\:p-2"))) {
           handleChatResponse();
         }
       });
