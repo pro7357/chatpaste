@@ -4,6 +4,8 @@ ChatPaste is a Chrome extension that send chat logs from ChatGPT to terminal std
 
 ## Limitation
 
+WARNING! ChatPaste no longer working. I spend more time on local LLM than ChatGPT and not motivated to maintain this program. Maybe I'll fix this in the future but until then, ChatPaste is broken and there is no update coming.
+
 Only tested with free ChatGPT, not on ChatGPT Plus or Playground.
 
 Only tested on desktop Chromium on linux.
